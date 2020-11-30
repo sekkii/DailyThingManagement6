@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
 
 
     // 表示する画像の名前（拡張子無し）
-    private String[] members = {};
+    private String[] members = {"milk","wcpaper","paper","bashwash","tablewash","sugar","salt","vinegar","soy","miso"};
     List<String> removeList = new ArrayList<>();
 
     // Resource IDを格納するarray
