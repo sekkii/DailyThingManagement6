@@ -23,7 +23,7 @@ public class FileControl {
     public String[][] readFile(String file) {
         String text = null;
 
-        String[][] data = new String[100][5];
+        String[][] data = new String[100][6];
 
         try (FileInputStream fileInputStream = c.openFileInput(file);
              BufferedReader br = new BufferedReader(
@@ -85,12 +85,12 @@ public class FileControl {
         try (FileOutputStream fileOutputstream = c.openFileOutput(file, Context.MODE_PRIVATE)) {
             for (int i = 0; i < 100; i++) {
 
-                for (int j = 0; j < 5; j++) {
+                for (int j = 0; j < 6; j++) {
                     if (data[i][j] == null) {
                         break;
                     }
                     //4は最後の項目
-                    if (j != 4) {
+                    if (j != 5) {
                         //2は個数、ここでは変更される項目は数量となるため。ここを変更するべき？
                         if (j == 2) {
                             if (data[i][0].equals(id)) {
@@ -107,6 +107,72 @@ public class FileControl {
                     } else {
                         text = text + data[i][j] + "\n";
 
+                    }
+                }
+
+            }
+            fileOutputstream.write(text.getBytes());
+            //   System.out.println(text + "ファイルを保存しました");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    //行削除のメソッド、結局つかわなさそうなため未テスト
+    public void saveDeleteFile(String[][] data, String file, String id) {
+        //受け渡されているもの:ファイルを二次元配列にしたもの,ファイル名,変更するファイルの行ID
+        //現状は項目の個数を変更するコードになっている。なんの項目を変更するか
+        //変数を受け渡して変更できるようにしたほうがいいかも？
+        String text = "";
+
+        boolean flag = false;
+
+        // try-with-resources
+        try (FileOutputStream fileOutputstream = c.openFileOutput(file, Context.MODE_PRIVATE)) {
+            for (int i = 0; i < 100; i++) {
+
+                for (int j = 0; j < 6; j++) {
+                    if (data[i][j] == null) {
+                        break;
+                    }
+                    if(flag == false) {
+                        //5は最後の項目
+                        if (j != 5) {
+                            //2は個数、ここでは変更される項目は数量となるため。ここを変更するべき？
+                            if (j == 0) {
+                                if (data[i][0].equals(id)) {
+                                    flag = true;
+                                    j=5;
+
+                                } else {
+                                    text = text + data[i][j] + ",";
+
+                                }
+                            } else {
+                                text = text + data[i][j] + ",";
+
+                            }
+                        } else {
+                            text = text + data[i][j] + "\n";
+
+                        }
+                    }else{
+                        if (j != 5) {
+                            //2は個数、ここでは変更される項目は数量となるため。ここを変更するべき？
+                            if (j == 0) {
+                                text = text + Integer.toString(i-1) + ",";
+
+                                } else {
+                                text = text + data[i][j] + ",";
+
+                            }
+
+
+
+                        } else {
+                            text = text + data[i][j] + "\n";
+
+                        }
                     }
                 }
 

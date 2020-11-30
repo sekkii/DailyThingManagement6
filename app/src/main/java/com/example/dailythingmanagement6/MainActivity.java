@@ -17,15 +17,16 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity   implements AdapterView.OnItemClickListener {
 
-    private String[][] data = new String[100][5];
+    private String[][] data = new String[100][6];
     private FileControl file = new FileControl(this);
     private String fileName = "sample.csv";
 
 
 
     // 表示する画像の名前（拡張子無し）
-    private String[] members = {"milk","wcpaper","paper","bashwash","tablewash","sugar","salt","vinegar","soy","miso"};
-    List<String> removeList = new ArrayList<>();
+    private String[] members = new String[100];
+    private List<String> memlist = new ArrayList<>();
+
 
     // Resource IDを格納するarray
     private List<Integer> imgList = new ArrayList<>();
@@ -41,17 +42,21 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         data = file.readFile(fileName);
-        List<String> memlist = new ArrayList<String>(Arrays.asList(members));
+
         for (int i = 1; i < 100; i++) {
 
                 if (data[i][0] == null) {
                     break;
                 }
             if(data[i][2].equals("0")){
-                removeList.add(members[i-1]);
+
+                file.saveDeleteFile(data, fileName, Integer.toString(i));
+            }else {
+                memlist.add(data[i][5]);
+                members[i-1] = data[i][5];
             }
         }
-        memlist.removeAll(removeList);
+
 
 //        Button milkClick = findViewById(R.id.milk);
 //        ButtonClick milklistener = new ButtonClick();
@@ -59,8 +64,7 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
 
         // for-each member名をR.drawable.名前としてintに変換してarrayに登録
         for (String member: memlist){
-            int imageId = getResources().getIdentifier(
-                    member,"drawable", getPackageName());
+            int imageId = getResources().getIdentifier(member,"drawable", getPackageName());
             imgList.add(imageId);
         }
 
@@ -108,9 +112,13 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(getApplication(), SubActivity.class);
-        intent.putExtra("IMAGEID", imgList.get(position));
-        startActivity( intent );
+        String text = Integer.toString(position);
+        Intent intent = new Intent(getApplication(), RegisterActivity.class);
+       // System.out.println(position);
+        intent.putExtra("sendText", position);
+                        int requestCode = 1000;
+                startActivityForResult(intent, requestCode);
+        //startActivity( intent );
     }
 
 }

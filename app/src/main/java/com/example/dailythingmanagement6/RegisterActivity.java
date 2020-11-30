@@ -29,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Integer num = null;
     private Date limit = null;
     private Date notice_day = null;
-    private String[][] Data = new String[100][5];
+    private String[][] Data = new String[100][6];
     private FileControl file = new FileControl(this);
 
     //MainActivityから受け取るべきもの:品目のid
@@ -38,14 +38,17 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         Intent intent = getIntent();
-        message = intent.getStringExtra(MainActivity.EXTRA_DATA);
+        int Id = intent.getIntExtra("sendText", 0)+1;
+        System.out.println(Id);
+
 
         Data = file.readFile(fileName);
         TextView textView = findViewById(R.id.title);
-        textView.setText(message);
+        textView.setText(Data[Id][1]);
         value = findViewById(R.id.value);
 
-        value.setText(Data[1][2]);
+
+        value.setText(Data[Id][2]);
 
         // back to MainActivity
         Button sbutton = findViewById(R.id.save);
@@ -66,7 +69,6 @@ public class RegisterActivity extends AppCompatActivity {
             switch (id) {
                 case R.id.save:
                     String newval = value.getText().toString();
-                    message = "1";
 
                     file.saveFile(Data, fileName, message, newval);
                     Intent intent = new Intent();
