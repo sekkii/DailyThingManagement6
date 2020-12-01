@@ -74,12 +74,15 @@ public class FileControl {
         return data;
     }
 
-    public void saveFile(String[][] data, String file, String id, String val) {
-        //受け渡されているもの:ファイルを二次元配列にしたもの,ファイル名,変更するファイルのID,変更する項目の個数
+    public void saveFile(String[][] data, String file, String id, String val,Integer column) {
+        //受け渡されているもの:ファイルを二次元配列にしたもの,ファイル名,変更するファイルのID,変更する項目の個数,変更する項目
         //現状は項目の個数を変更するコードになっている。なんの項目を変更するか
-        //変数を受け渡して変更できるようにしたほうがいいかも？
+        //変数を受け渡して変更できるようにしたほうがいいかも？←変更済み、columnに変更する項目の数値を入れてください（例:個数の場合は2)
+        //ID　名前 個数　消費量 通知日 画像の名前
+        //0   1    2    3      4       5      これを受け渡してください。
         String text = "";
-        System.out.println(file + id + val);
+        //受け渡した変数確認用
+        System.out.println(file + id + val+column);
 
         // try-with-resources
         try (FileOutputStream fileOutputstream = c.openFileOutput(file, Context.MODE_PRIVATE)) {
@@ -91,8 +94,7 @@ public class FileControl {
                     }
                     //4は最後の項目
                     if (j != 5) {
-                        //2は個数、ここでは変更される項目は数量となるため。ここを変更するべき？
-                        if (j == 2) {
+                        if (j == column) {
                             if (data[i][0].equals(id)) {
                                 text = text + val + ",";
 

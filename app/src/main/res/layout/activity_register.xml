@@ -9,14 +9,16 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="180dp"
+        android:layout_width="327dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="108dp"
+        android:layout_marginEnd="10dp"
         android:gravity="center_horizontal|center_vertical"
         android:includeFontPadding="false"
         android:text="牛乳"
         android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,8 +26,8 @@
         android:id="@+id/unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="133dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="160dp"
         android:text="個"
         app:layout_constraintStart_toEndOf="@+id/value"
         app:layout_constraintTop_toBottomOf="@+id/save" />
@@ -40,31 +42,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="355dp"
-        android:layout_height="338dp"
-        android:layout_marginStart="42dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginBottom="12dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/plusone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/expiration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="****/**/**" />
-    </LinearLayout>
-
     <Button
         android:id="@+id/plusone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="67dp"
-        android:layout_marginBottom="22dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="428dp"
         android:text="+1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -73,21 +56,24 @@
         android:id="@+id/minusone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="67dp"
-        android:layout_marginBottom="22dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="428dp"
         android:text="-1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/value"
-        android:layout_width="131dp"
-        android:layout_height="46dp"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
         android:layout_marginStart="154dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="154dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="number"
         android:text="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
@@ -95,11 +81,26 @@
         android:id="@+id/rimit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="174dp"
+        android:layout_marginStart="147dp"
         android:layout_marginTop="45dp"
+        android:layout_marginEnd="147dp"
         android:text="予想消費日"
         android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/value" />
+
+    <EditText
+        android:id="@+id/showDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginEnd="105dp"
+        android:ems="10"
+        android:inputType="date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rimit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
