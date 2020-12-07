@@ -28,6 +28,7 @@ public class FileControl {
         try (FileInputStream fileInputStream = c.openFileInput(file);
              BufferedReader br = new BufferedReader(
                      new InputStreamReader(fileInputStream, StandardCharsets.UTF_8))) {
+            System.out.println("読み込み");
 
             //読み込み行
             String line;
