@@ -1,6 +1,7 @@
 package com.example.dailythingmanagement6;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.AppLaunchChecker;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -15,13 +16,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.Toast;
 
-import com.google.android.gms.common.api.internal.ListenerHolder;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity   implements AdapterView.OnItemClickListener {
@@ -53,18 +53,58 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(AppLaunchChecker.hasStartedFromLauncher(this)){
+            Log.d("AppLaunchChecker","2回目以降");
+        } else {
+            Log.d("AppLaunchChecker","はじめてアプリを起動した");
+        }
+
+        AppLaunchChecker.onActivityCreate(this);
+        //データ読込
         data = file.readFile(fileName);
+
+        //通知処理
+
         //呼び出す日時を設定する
-        Calendar triggerTime = Calendar.getInstance();
-        triggerTime.add(Calendar.SECOND, 10);	//今から5秒後
+        int ACTIVE_REQUEST_CODE = 12;    // たとえば、requestCodeが12以上のアラームを有効にしておくとして
 
-        //設定した日時で発行するIntentを生成
-        Intent intent1 = new Intent(MainActivity.this, Notifier.class);
-        PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-//日時と発行するIntentをAlarmManagerにセットします
-        AlarmManager manager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        manager.set(AlarmManager.RTC_WAKEUP, triggerTime.getTimeInMillis(), sender);
+    // 不要になった過去のアラームをまとめて削除する
+    // requestCodeを0から登録していたとする
+        for (int requestCode = 0; requestCode < ACTIVE_REQUEST_CODE; requestCode++) {
+            Intent intent = new Intent(MainActivity.this, Notifier.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), requestCode, intent, 0);
+
+            pendingIntent.cancel();
+            alarmManager.cancel(pendingIntent);
+        }
+        for (int i = 1; i < 100; i++) {
+
+            if (data[i][0] == null) {
+                break;
+            }
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/d");
+            Date date = null;
+            try {
+                date = dateFormat.parse(data[i][4]);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+//            Calendar triggerTime = Calendar.getInstance();
+//            triggerTime.add(Calendar.SECOND, 10);    //今から5秒後
+
+            Calendar triggerTime = Calendar.getInstance();
+            triggerTime.setTime(date);
+            //設定した日時で発行するIntentを生成
+            Intent intent1 = new Intent(MainActivity.this, Notifier.class);
+            PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this, i, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            //日時と発行するIntentをAlarmManagerにセットします
+            AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            manager.set(AlarmManager.RTC_WAKEUP, triggerTime.getTimeInMillis(), sender);
+        }
 
         for (int i = 1; i < 100; i++) {
 
@@ -137,6 +177,59 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
         }
         //通知の発行
         notificationManager.notify(1, notification);
+
+    }
+    //Activityを表示したとき。通知登録とcsv読み込みはここに入れる。
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //データ読込
+        data = file.readFile(fileName);
+
+        //通知処理
+
+        //呼び出す日時を設定する
+        int ACTIVE_REQUEST_CODE = 12;    // たとえば、requestCodeが12以上のアラームを有効にしておくとして
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        // 不要になった過去のアラームをまとめて削除する
+        // requestCodeを0から登録していたとする
+        for (int requestCode = 0; requestCode < ACTIVE_REQUEST_CODE; requestCode++) {
+            Intent intent = new Intent(getApplicationContext(), Notifier.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), requestCode, intent, 0);
+
+            pendingIntent.cancel();
+            alarmManager.cancel(pendingIntent);
+        }
+        for (int i = 1; i < 100; i++) {
+
+            if (data[i][0] == null) {
+                break;
+            }
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/d");
+            Date date = null;
+            try {
+                date = dateFormat.parse(data[i][4]);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+//            Calendar triggerTime = Calendar.getInstance();
+//            triggerTime.add(Calendar.SECOND, 10);    //今から5秒後
+
+            Calendar triggerTime = Calendar.getInstance();
+            triggerTime.setTime(date);
+            //設定した日時で発行するIntentを生成
+            Intent intent1 = new Intent(getApplicationContext(), Notifier.class);
+            PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), i, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            //日時と発行するIntentをAlarmManagerにセットします
+            AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            manager.set(AlarmManager.RTC_WAKEUP, triggerTime.getTimeInMillis(), sender);
+            System.out.println(triggerTime.getTime());
+        }
+
 
     }
 
