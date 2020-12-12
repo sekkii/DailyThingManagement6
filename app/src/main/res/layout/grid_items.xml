@@ -12,6 +12,10 @@
         android:layout_height="140dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/description"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/text_view"
@@ -26,5 +30,19 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/text_num"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:shadowColor="#444"
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    </LinearLayout>
 
 </RelativeLayout>

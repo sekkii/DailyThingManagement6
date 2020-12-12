@@ -16,10 +16,12 @@ public class GridAdapter extends BaseAdapter {
     class ViewHolder {
         ImageView imageView;
         TextView textView;
+        TextView textNum;
     }
 
     private List<Integer> imageList = new ArrayList<>();
     private String[] names;
+    private String[] numbers;
     private LayoutInflater inflater;
     private int layoutId;
 
@@ -27,7 +29,9 @@ public class GridAdapter extends BaseAdapter {
     GridAdapter(Context context,
                 int layoutId,
                 List<Integer> iList,
-                String[] members) {
+                String[] members,
+                String[] nums
+    ) {
 
         super();
         this.inflater = (LayoutInflater)
@@ -35,6 +39,7 @@ public class GridAdapter extends BaseAdapter {
         this.layoutId = layoutId;
         imageList = iList;
         names = members;
+        numbers = nums;
     }
 
     @Override
@@ -49,6 +54,7 @@ public class GridAdapter extends BaseAdapter {
 
             holder.imageView = convertView.findViewById(R.id.image_view);
             holder.textView = convertView.findViewById(R.id.text_view);
+            holder.textNum = convertView.findViewById(R.id.text_num);
 
             convertView.setTag(holder);
         }
@@ -58,6 +64,7 @@ public class GridAdapter extends BaseAdapter {
 
         holder.imageView.setImageResource(imageList.get(position));
         holder.textView.setText(names[position]);
+        holder.textNum.setText(numbers[position]);
 
         return convertView;
     }

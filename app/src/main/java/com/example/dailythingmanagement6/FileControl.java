@@ -187,4 +187,36 @@ public class FileControl {
             e.printStackTrace();
         }
     }
+    public void addFile(String[][] data, String file) {
+        //受け渡されているもの:ファイルを二次元配列にしたもの,ファイル名
+        //二次元配列に追加する行を受け渡した状態で受け渡す
+        //ID　名前 個数　消費量 通知日 画像の名前
+        //0   1    2    3      4       5      これを受け渡してください。
+        String text = "";
+
+        // try-with-resources
+        try (FileOutputStream fileOutputstream = c.openFileOutput(file, Context.MODE_PRIVATE)) {
+            for (int i = 0; i < 100; i++) {
+
+                for (int j = 0; j < 6; j++) {
+                    if (data[i][j] == null) {
+                        break;
+                    }
+                    //5は最後の項目
+                    if (j != 5) {
+                            text = text + data[i][j] + ",";
+                    } else {
+                        text = text + data[i][j] + "\n";
+
+                    }
+                }
+
+            }
+            fileOutputstream.write(text.getBytes());
+            //   System.out.println(text + "ファイルを保存しました");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.dailythingmanagement6;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.AppLaunchChecker;
 
 import android.app.AlarmManager;
@@ -17,6 +18,16 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +44,7 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
 
     // 表示する画像の名前（拡張子無し）
     private String[] members = new String[100];
+    private String[] nums = new String[100];
     private List<String> memlist = new ArrayList<>();
 
 
@@ -53,58 +65,104 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //データ読込
+      //  data = file.readFile(fileName);
+        // FloatingActionButton
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplication(), AddActivity.class);
+                // System.out.println(position);
+               // intent.putExtra("sendText", position);
+                int requestCode = 10000;
+                startActivityForResult(intent, requestCode);
+
+            }
+        }
+        );
+
         if(AppLaunchChecker.hasStartedFromLauncher(this)){
             Log.d("AppLaunchChecker","2回目以降");
         } else {
             Log.d("AppLaunchChecker","はじめてアプリを起動した");
+
+
+            try (InputStream is = this.getAssets().open("sample.csv");
+                 BufferedReader br = new BufferedReader(
+                         new InputStreamReader(is, StandardCharsets.UTF_8))){
+                System.out.println("読み込み");
+
+                //読み込み行
+                String line;
+
+                //読み込み行数の管理
+                int i = 0;
+
+                //列名を管理する為の配列
+                String[] arr = null;
+
+                //1行ずつ読み込みを行う
+                while ((line = br.readLine()) != null) {
+
+                    //先頭行は列名
+                    if (i == 0) {
+
+                        //カンマで分割した内容を配列に格納する
+                        // arr = { "no","name","num","cons" ,"notice_day};
+                        arr = line.split(",");
+                        data[i] = arr;
+
+                    } else {
+
+
+                        String[] dataline = line.split(",");
+
+
+//                    //配列の中身を順位表示する。列数(=列名を格納した配列の要素数)分繰り返す
+//                    int colno = 2;
+//                    System.out.println(dataline[colno]);
+
+                        data[i] = dataline;
+
+
+                    }
+                    //行数のインクリメント
+                    i++;
+                }
+            }  catch (IOException e) {
+                e.printStackTrace();
+            }
+            file.saveFile(data, fileName, "1", data[1][1],1);
+
+
+            Intent intent = new Intent(getApplication(), FirstSetting1.class);
+            // System.out.println(position);
+            // intent.putExtra("sendText", position);
+            int requestCode = 10000;
+            startActivityForResult(intent, requestCode);
         }
 
         AppLaunchChecker.onActivityCreate(this);
+
+
+
+    }
+    //Activityを表示したとき。通知登録とcsv読み込みはここに入れる。
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         //データ読込
         data = file.readFile(fileName);
 
-        //通知処理
+        //view 表示処理
 
-        //呼び出す日時を設定する
-        int ACTIVE_REQUEST_CODE = 12;    // たとえば、requestCodeが12以上のアラームを有効にしておくとして
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-    // 不要になった過去のアラームをまとめて削除する
-    // requestCodeを0から登録していたとする
-        for (int requestCode = 0; requestCode < ACTIVE_REQUEST_CODE; requestCode++) {
-            Intent intent = new Intent(MainActivity.this, Notifier.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), requestCode, intent, 0);
-
-            pendingIntent.cancel();
-            alarmManager.cancel(pendingIntent);
-        }
-        for (int i = 1; i < 100; i++) {
-
-            if (data[i][0] == null) {
-                break;
-            }
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/d");
-            Date date = null;
-            try {
-                date = dateFormat.parse(data[i][4]);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-//            Calendar triggerTime = Calendar.getInstance();
-//            triggerTime.add(Calendar.SECOND, 10);    //今から5秒後
-
-            Calendar triggerTime = Calendar.getInstance();
-            triggerTime.setTime(date);
-            //設定した日時で発行するIntentを生成
-            Intent intent1 = new Intent(MainActivity.this, Notifier.class);
-            PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this, i, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            //日時と発行するIntentをAlarmManagerにセットします
-            AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            manager.set(AlarmManager.RTC_WAKEUP, triggerTime.getTimeInMillis(), sender);
-        }
+        //表示する項目のリストの初期化
+        memlist.clear();
+        members = new String[100];
+        nums = new String[100];
+        imgList.clear();
 
         for (int i = 1; i < 100; i++) {
 
@@ -116,14 +174,10 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
                 file.saveDeleteFile(data, fileName, Integer.toString(i));
             } else {
                 memlist.add(data[i][5]);
-                members[i - 1] = data[i][5];
+                members[i - 1] = data[i][1];
+                nums[i - 1] = data[i][2];
             }
         }
-
-
-//        Button milkClick = findViewById(R.id.milk);
-//        ButtonClick milklistener = new ButtonClick();
-//        milkClick.setOnClickListener(milklistener);
 
         // for-each member名をR.drawable.名前としてintに変換してarrayに登録
         for (String member : memlist) {
@@ -139,57 +193,21 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
         GridAdapter adapter = new GridAdapter(this.getApplicationContext(),
                 R.layout.grid_items,
                 imgList,
-                members
+                members,
+                nums
         );
+
 
         // gridViewにadapterをセット
         gridview.setAdapter(adapter);
 
         // item clickのListnerをセット
         gridview.setOnItemClickListener(this);
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        //アプリ名をチャンネルIDとして利用
-        String chID = getString(R.string.app_name);
-
-        //アンドロイドのバージョンで振り分け
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {     //APIが「26」以上の場合
-
-            //通知チャンネルIDを生成してインスタンス化
-            NotificationChannel notificationChannel = new NotificationChannel(chID, chID, NotificationManager.IMPORTANCE_DEFAULT);
-            //通知の説明のセット
-            notificationChannel.setDescription(chID);
-            //通知チャンネルの作成
-            notificationManager.createNotificationChannel(notificationChannel);
-            //通知の生成と設定とビルド
-            notification = new Notification.Builder(this, chID)
-                    .setContentTitle(getString(R.string.app_name))  //通知タイトル
-                    .setContentText("アプリ通知テスト26以上")        //通知内容
-                    .setSmallIcon(R.drawable.milk)                  //通知用アイコン
-                    .build();                                       //通知のビルド
-        } else {
-            //APIが「25」以下の場合
-            //通知の生成と設定とビルド
-            notification = new Notification.Builder(this)
-                    .setContentTitle(getString(R.string.app_name))
-                    .setContentText("アプリ通知テスト25まで")
-                    .setSmallIcon(R.drawable.milk)
-                    .build();
-        }
-        //通知の発行
-        notificationManager.notify(1, notification);
-
-    }
-    //Activityを表示したとき。通知登録とcsv読み込みはここに入れる。
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //データ読込
-        data = file.readFile(fileName);
 
         //通知処理
 
         //呼び出す日時を設定する
-        int ACTIVE_REQUEST_CODE = 12;    // たとえば、requestCodeが12以上のアラームを有効にしておくとして
+        int ACTIVE_REQUEST_CODE = 100;    // たとえば、requestCodeが12以上のアラームを有効にしておくとして
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
@@ -221,7 +239,11 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
             Calendar triggerTime = Calendar.getInstance();
             triggerTime.setTime(date);
             //設定した日時で発行するIntentを生成
+            int picId = getResources().getIdentifier(data[i][5], "drawable", getPackageName());
             Intent intent1 = new Intent(getApplicationContext(), Notifier.class);
+            intent1.putExtra("id", i-1);
+            intent1.putExtra("name", data[i][1]);
+            intent1.putExtra("picname", picId);
             PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), i, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
 
             //日時と発行するIntentをAlarmManagerにセットします
