@@ -163,20 +163,30 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
         members = new String[100];
         nums = new String[100];
         imgList.clear();
+        int j = 1;
 
         for (int i = 1; i < 100; i++) {
+
 
             if (data[i][0] == null) {
                 break;
             }
             if (data[i][2].equals("0")) {
+//
+//                file.saveDeleteFile(data, fileName, Integer.toString(i));
+//                data = file.readFile(fileName);
+//                System.out.println(data[i][0]);
+                //バグ：現状個数が0の行を削除していないため、positionの行の登録画面が出力されるため修正必須
+                //解決案　0の行を消すようにする←こっちが理想新規項目を登録したときに、0の行が残るままだと不便なため
+                // 　　　csvに対応した数値をだすようにする
 
-                file.saveDeleteFile(data, fileName, Integer.toString(i));
-            } else {
+            }else {
                 memlist.add(data[i][5]);
-                members[i - 1] = data[i][1];
-                nums[i - 1] = data[i][2];
+                members[j-1] = data[i][1];
+                nums[j-1] = data[i][2];
+                j++;
             }
+
         }
 
         // for-each member名をR.drawable.名前としてintに変換してarrayに登録
@@ -284,6 +294,7 @@ public class MainActivity extends AppCompatActivity   implements AdapterView.OnI
         String text = Integer.toString(position);
         Intent intent = new Intent(getApplication(), RegisterActivity.class);
         // System.out.println(position);
+
         intent.putExtra("sendText", position);
         int requestCode = 1000;
         startActivityForResult(intent, requestCode);

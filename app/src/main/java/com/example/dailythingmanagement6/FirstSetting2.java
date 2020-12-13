@@ -52,15 +52,17 @@ public class FirstSetting2 extends AppCompatActivity {
                 buttonSave.setText("押された");
                 for (int i = 0; i <= 9; i++) {
                     CheckBox checkbox = (CheckBox)checkBox[i];
+                    fileData = file.readFile(fileName);
                     String id = String.valueOf(i+1);
                     // TODO Auto-generated method stub
                     if (checkbox.isChecked()) {
                         // チェックされた状態の時の処理を記述
                         file.saveFile(fileData, fileName, id, newval1,2);
-                        fileData = file.readFile(fileName);
+
                     } else {
                         //チェックされていない状態の時の処理を記述
                         file.saveFile(fileData, fileName, id, newval2,2);
+
                     }
                 }
                 // Intent のインスタンスを取得する（最初の画面）
