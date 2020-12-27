@@ -70,7 +70,7 @@ public class AddActivity extends AppCompatActivity {
                         data[i][2] = textView2.getText().toString();
                         data[i][3] = "0.1";
                         data[i][4] = editDate.getText().toString();
-                        data[i][5] = "text_mu";
+                        data[i][5] = "no_image_logo";
                         break;
                     }
                 }

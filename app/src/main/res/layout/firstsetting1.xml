@@ -15,7 +15,7 @@
         android:layout_marginEnd="41dp"
         android:layout_marginRight="41dp"
         android:layout_marginBottom="53dp"
-        android:text="人数を入力してください"
+        android:text="世帯人数を入力してください"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/family_size"
         app:layout_constraintEnd_toEndOf="parent"
